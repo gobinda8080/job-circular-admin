@@ -126,5 +126,8 @@
     "moment-timezone": "^0.5.31",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
+  },
+  "engines": {
+    "node": "14.15.3"
   }
 }

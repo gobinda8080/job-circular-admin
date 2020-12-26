@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
 import BreadCrumb from '../layout/Breadcrumb'
 import {Container,Row,Col,Card,CardHeader,CardBody,CardFooter,Button,Form,FormGroup,Label,Input} from 'reactstrap'
-import fb from '../data/base'
+import fb, { db } from '../data/base'
 
 
 const OthersInput = () => {
 
+  const [success, setSuccess] = React.useState(null)
   const [info, setInfo] = React.useState({
     title: '',
     description: '',
@@ -32,41 +33,105 @@ const OthersInput = () => {
   }
   const handleSubmit = ()=>{
     const {title, description, date, category} = info
-    if(files.image === '' || files.pdf === ''){
-      fb.database().ref('/others').push({title, description, date, category, image: '', pdf: ''})
+if(title !== ''){
+  if(files.image !== '' && files.pdf !== ''){
+      //uploading PDF
+      let pdf = files.pdf[0]
+      let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
+      uploadTask.on('state_changed', 
+        (snapshot)=>{
+                      
+        },
+        (error)=>{
+          console.log(error)
+        },
+        ()=>{
+          fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( pdfUrl=>{
+        //uploading IMAGE
+            let image = files.image[0]
+            let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
+            uploadTask.on('state_changed', 
+              (snapshot)=>{
+    
+              },
+              (error)=>{
+                console.log(error)
+              },
+              ()=>{
+                fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( imageUrl=>{
+                  const { title, description, date, category} = info
+                  fb.database().ref('/others').push({title, description, date, category, image: imageUrl, pdf: pdfUrl })
+                  handleSuccess();
+                  handleClear();
+                })
+              }
+            ) 
+    
+          })
+        }
+      ) 
+
     }else{
+      if(files.image !== '' && files.pdf === ''){
+
+        let image = files.image[0]
+        let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
+        uploadTask.on('state_changed', 
+          (snapshot)=>{
+
+          },
+          (error)=>{
+            console.log(error)
+          },
+          ()=>{
+            fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
+              const { title, description, date, category} = info
+              fb.database().ref('/others').push({title, description, date, category, image: url, pdf: '' })
+              handleSuccess();
+              console.log(url);
+              handleClear();
+            })
+          }
+        ) 
+
+      }else if(files.image === '' && files.pdf !== ''){
+
+        let pdf = files.pdf[0]
+        let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
+        uploadTask.on('state_changed', 
+          (snapshot)=>{
+                        
+          },
+          (error)=>{
+            console.log(error)
+          },
+          ()=>{
+            fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( url=>{
+              const { title, description, date, category} = info
+              fb.database().ref('/others').push({title, description, date, category, image: '', pdf: url })
+              handleSuccess();
+              console.log(url);
+              handleClear();
+            })
+          }
+        ) 
+      }else{
+        fb.database().ref('/others').push({title, description, date, category, image: '', pdf: ''})
+        handleSuccess();
+        handleClear();
+      }
 
     }
+  }    
 
+}
 
-
-    // if(files.image){
-    //   let file = files.image[0]
-    //   let uploadTask = fb.storage().ref(`images/${file.name}`).put(file)
-    //   uploadTask.on('state_changed', 
-    //     (snapshot)=>{
-    //       // console.log(snapshot);
-    //     },
-    //     (error)=>{
-    //       // console.log(error);
-    //     },
-    //     ()=>{
-    //       fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
-    //         const {title, description, date, category} = info
-    //         fb.database().ref('/others').push({title, description, date, category, image: url})
-    //         console.log(url);
-    //       })
-    //     }
-    //   )        
-    // }
-    
-    
-
-
-
-
-  }
-
+const handleSuccess = ()=>{
+  setSuccess(true)
+  setTimeout(()=>{
+    setSuccess(false)
+  }, 2000)
+}
 const handleClear = ()=>{
   setInfo({
     title: '',
@@ -74,8 +139,13 @@ const handleClear = ()=>{
     date: '',
     category: '',
   })
+  setFiles({
+    image: '',
+    pdf: ''
+  })
 }
-console.log(info)
+
+console.log(files)
   return (
     <Fragment>
       <BreadCrumb parent="Home" subparent="Others" title="New"/>
@@ -92,7 +162,7 @@ console.log(info)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlInput1">Title</Label>
-                        <Input className="form-control" name="title"  type="text" placeholder="Circular title..." onChange={handleInfo}/>
+                        <Input className="form-control" name="title"  type="text" placeholder="Circular title..." value={info.title} onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -100,7 +170,7 @@ console.log(info)
                     <Col>
                       <FormGroup className="mb-2">
                         <Label>Description</Label>
-                        <Input type="textarea" name="description" className="form-control"  rows="3" onChange={handleInfo}/>
+                        <Input type="textarea" name="description" className="form-control"  rows="3" value={info.description}  onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -108,7 +178,7 @@ console.log(info)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleInputPassword2">End of the date</Label>
-                        <Input className="form-control" name="date" type="date" onChange={handleInfo}/>
+                        <Input className="form-control" name="date" type="date" value={info.date} onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -116,7 +186,7 @@ console.log(info)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlSelect9">Category</Label>
-                        <Input type="select" name="category" className="form-control digits" defaultValue="1"  onChange={handleInfo}>
+                        <Input type="select" name="category" className="form-control digits" value={info.category}  onChange={handleInfo}>
                           <option value="">Select a Category</option>
                           <option value="প্রতিদিনের তথ্য">প্রতিদিনের তথ্য</option>
                           <option value="সাম্প্রতিক তথ্য">সাম্প্রতিক তথ্য</option>
@@ -134,7 +204,7 @@ console.log(info)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlSelect3">Choose an image</Label>
-                        <Input className="form-control"  type="file"/>
+                        <Input className="form-control" name="image" accept="image/png, image/jpeg" type="file" onChange={handleFile}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -142,14 +212,14 @@ console.log(info)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlSelect3">Choose a pdf</Label>
-                        <Input className="form-control"  type="file"/>
+                        <Input className="form-control" name="pdf" type="file"  accept="application/pdf" onChange={handleFile}/>
                       </FormGroup>
                     </Col>
                   </Row>
                 </CardBody>
                 <CardFooter>
-                  <Button  color="primary" onClick={handleSubmit} className="mr-1" >Submit</Button>
-                  <Button className="btn btn-light" type="reset" >Cancel</Button>
+                  <Button  color="primary" onClick={ handleSubmit } className="mr-1" disabled={success? true: false}>{success? 'Success': 'Submit'}</Button>
+                  <Button className="btn btn-light" onClick={handleClear} type="reset" >Cancel</Button>
                 </CardFooter>
               {/* </Form> */}
             </Card>
