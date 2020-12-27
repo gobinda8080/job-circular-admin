@@ -1,4 +1,3 @@
 [build]
-
   command = "echo 'default context'"
   CI='' npm run build
