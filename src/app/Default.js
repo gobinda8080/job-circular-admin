@@ -80,27 +80,6 @@ const Default = () => {
       })
     },[])
 
-    const handleRemoveOther = () => {
-        alert('Are you want to remove all ?')
-        if(exOtherList){
-            for (let i = 0; i < exOtherList.length; i++) {
-                const j = exOtherList[i].key;
-                console.log(j);                
-                fb.database().ref(`/others/${j}`).remove()  
-            }
-        }
-    }
-
-    const handleRemoveJob = () => {
-        alert('Are you want to remove all ?')
-        if(exJobList){
-            for (let k = 0; k < exJobList.length; k++) {
-                const o = exJobList[k].key;
-                console.log(o);                
-                fb.database().ref(`/jobs/${o}`).remove()  
-            }
-        }
-    }
 
     const cartProducts = [
       {
@@ -171,7 +150,7 @@ const Default = () => {
             <Card className="o-hidden">
               <CardBody className="bg-primary b-r-4 card-body">
                 <div className="media static-top-widget">
-                  <div className="align-self-center text-center"><ShoppingBag/></div>
+                  <div className="align-self-center text-center"><ShoppingBag /></div>
                   <div className="media-body"><span className="m-0">Total Jobs</span>
                     <h4 className="mb-0 counter">{jobList?jobList.length : jobList}</h4><ShoppingBag className="icon-bg"/>
                   </div>
@@ -183,7 +162,7 @@ const Default = () => {
                 <Card className="o-hidden">
                   <div className="bg-primary b-r-4 card-body">
                     <div className="media static-top-widget">
-                      <div className="align-self-center text-center"><MessageCircle/></div>
+                      <div className="align-self-center text-center"><MessageCircle /></div>
                       <div className="media-body"><span className="m-0">Total Others</span>
                         <h4 className="mb-0 counter">{otherList?otherList.length : otherList}</h4><MessageCircle className="icon-bg"/>
                       </div>
@@ -195,7 +174,7 @@ const Default = () => {
             <Card className="o-hidden">
                 <CardBody className="bg-secondary b-r-4">
                 <div className="media static-top-widget">
-                    <div className="align-self-center text-center"><h2><i style={{color: '#fff'}} onClick={()=>{ handleRemoveJob() }} className="fa fa-trash-o mr-3"></i></h2></div>
+                    <div className="align-self-center text-center"><ShoppingBag /></div>
                     <div className="media-body"><span className="m-0">Expired Jobs</span>
                     <h4 className="mb-0 counter">{exJobList?exJobList.length : exJobList}</h4><ShoppingBag className="icon-bg"/>
                     </div>
@@ -207,7 +186,7 @@ const Default = () => {
             <Card className="o-hidden">
                 <CardBody className="bg-secondary b-r-4">
                 <div className="media static-top-widget">
-                    <div className="align-self-center text-center"><h2><i style={{color: '#fff'}} onClick={()=>{ handleRemoveOther() }} className="fa fa-trash-o mr-3"></i></h2></div>
+                    <div className="align-self-center text-center"><MessageCircle /></div>
                     <div className="media-body"><span className="m-0">Expired Others</span>
                     <h4 className="mb-0 counter">{exOtherList? exOtherList.length : exOtherList}</h4><MessageCircle className="icon-bg"/>
                     </div>
