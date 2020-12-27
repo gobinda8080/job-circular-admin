@@ -1,5 +1,5 @@
 // Dashboard
-import Default from '../components/dashboard/Default'
+import Default from '../app/Default'
 import Hospital from '../components/dashboard/Hospital'
 import Sass from '../components/dashboard/Sass'
 import Crm from '../components/dashboard/Crm'
@@ -68,7 +68,7 @@ import List from '../components/base/List'
 import Scrolling from '../components/advance/Scrolling'
 import BootstrapNotify from '../components/advance/BootstrapNotify'
 import Rating from '../components/advance/Rating'
-import Dropzone from '../components/advance/Dropzone'
+// import Dropzone from '../components/advance/Dropzone'
 import SweetAlert from '../components/advance/SweetAlert'
 import Tour from '../components/advance/Tour'
 import Sticky from '../components/advance/Sticky'
@@ -156,8 +156,8 @@ import UserCards from '../components/users/UserCards'
 
 // Calendar
 
-import BasicCalender from '../components/calendar/BasicCalendar'
-import DraggableCalendar from '../components/calendar/DraggableCalendar'
+// import BasicCalender from '../components/calendar/BasicCalendar'
+// import DraggableCalendar from '../components/calendar/DraggableCalendar'
 
 // Icons
 import FlagIcons from '../components/icons/FlagIcons'
@@ -195,14 +195,14 @@ import Timeline2 from '../components/timelines/Timeline2'
 
 // Charts 
 import Apexcharts from "../components/charts/ApexCharts/Apexcharts";
-import GoogleCharts from "../components/charts/GoogleCharts/GoogleCharts";
+// import GoogleCharts from "../components/charts/GoogleCharts/GoogleCharts";
 import KnobChart from "../components/charts/KnobChart/KnobChart";
 import Chartsjs from "../components/charts/Chartsjs/Chartsjs";
 import Chartist from "../components/charts/ChartistCharts/Chartist";
 
 // Maps
 
-import GoogleMap from '../components/map/GoogleMap'
+// import GoogleMap from '../components/map/GoogleMap'
 import LeafletMap from '../components/map/LeafletMap'
 
 
@@ -291,7 +291,7 @@ export const routes = [
   { path: "/advance/scrollable" ,Component: Scrolling},
   { path: "/advance/bootstrap-notify" ,Component: BootstrapNotify},
   { path: "/advance/rating" ,Component: Rating},  
-  { path: "/advance/dropzone" ,Component: Dropzone},
+  // { path: "/advance/dropzone" ,Component: Dropzone},
   { path: "/advance/sweetAlert" ,Component: SweetAlert},
   { path: "/advance/tourComponent" ,Component: Tour},
   { path: "/advance/breadcrumb" ,Component: Breadcrumb},
@@ -362,8 +362,8 @@ export const routes = [
   { path: "/users/userEdit" ,Component: UserEdit},
   { path: "/users/userCards" ,Component: UserCards},
 
-  { path: "/calendar/basic-calendar" ,Component: BasicCalender},
-  { path: "/calendar/draggable-calendar" ,Component: DraggableCalendar},
+  // { path: "/calendar/basic-calendar" ,Component: BasicCalender},
+  // { path: "/calendar/draggable-calendar" ,Component: DraggableCalendar},
 
 
   { path: "/icons/flagIcons" ,Component: FlagIcons},
@@ -396,12 +396,12 @@ export const routes = [
   { path: "/timelines/timeline2" ,Component: Timeline2},
 
   { path: "/charts/apexCharts" ,Component: Apexcharts},
-  { path: "/charts/googleChart" ,Component: GoogleCharts},
+  // { path: "/charts/googleChart" ,Component: GoogleCharts},
   { path: "/charts/knobChart" ,Component: KnobChart},
   { path: "/charts/chartJs" ,Component: Chartsjs},
   { path: "/charts/chartistComponent" ,Component: Chartist},
 
-  { path: "/map/googleMap" ,Component: GoogleMap},
+  // { path: "/map/googleMap" ,Component: GoogleMap},
   { path: "/map/LeafletMap" ,Component: LeafletMap},
 
   { path: "/editor/ckEditor" ,Component: CkEditor},

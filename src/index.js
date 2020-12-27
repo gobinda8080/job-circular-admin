@@ -94,9 +94,9 @@ const Root = (props) =>  {
                         {currentUser !== null ?
                             <App>
                             
-                            {/* <Route exact path={`${process.env.PUBLIC_URL}/`} render={() => {
+                            <Route exact path={`${process.env.PUBLIC_URL}/`} render={() => {
                                     return (<Redirect to={`${process.env.PUBLIC_URL}/dashboard/default`} />)
-                                }} /> */}
+                                }} />
                             
                             <TransitionGroup>
                             {routes.map(({ path, Component }) => (

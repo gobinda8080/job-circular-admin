@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import BreadCrumb from '../layout/Breadcrumb'
-import {Container,Row,Col,Card,CardHeader,CardBody} from 'reactstrap';
+import {Container,Row,Col,Card} from 'reactstrap';
 import CardView from './others/Card';
 import fb from '../data/base'
 import _ from 'lodash'
@@ -12,13 +12,13 @@ const  JobList = (props) => {
   useEffect(()=>{
     
     fb.database().ref('/others').on('value', snapshot => {           
-      const jobsList = _.map(snapshot.val(), (val, key)=>{
+      let jobsmapList = _.map(snapshot.val(), (val, key)=>{
           return {
             ...val,
             key: key
           }
         })
-        setJobList(jobsList)
+        setJobList(jobsmapList.reverse())
     })
 
   },[])

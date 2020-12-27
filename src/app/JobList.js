@@ -18,7 +18,7 @@ const  JobList = (props) => {
             key: key
           }
         })
-        setJobList(jobsList)
+        setJobList(jobsList.reverse())
     })
 
   },[])
