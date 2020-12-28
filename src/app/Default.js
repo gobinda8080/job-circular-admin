@@ -16,6 +16,8 @@ const Default = () => {
 
 
     const dateChecker = n => {
+      const rgx = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/
+      if(rgx.test(n)){
         let d = new Date()
         let y = d.getFullYear();
         let m = d.getMonth();
@@ -43,7 +45,12 @@ const Default = () => {
         }else{
             return true
         } 
-    }
+      }else{
+        return 0
+      }
+
+  }
+
 
     useEffect(()=>{
       
@@ -57,7 +64,6 @@ const Default = () => {
 
           let expJob = allJobs.filter(function (job) {
             return dateChecker(job.date)
- 
           });
           setExJobList(expJob);
           setJobList(allJobs)
@@ -72,8 +78,8 @@ const Default = () => {
             }
           })
           let expOther = allOthers.filter(function (other) {
-            return dateChecker(other.date)
- 
+            console.log(other.date)
+              return dateChecker(other.date)
           });
           setExOtherList(expOther);
           setOtherList(allOthers)
@@ -204,20 +210,46 @@ const Default = () => {
                   <Table borderless>
                     <thead>
                       <tr>
-                        <th scope="col">Details</th>
+                        <th scope="col">Category</th>
                         <th scope="col">Quantity</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Price</th>
                       </tr>
                     </thead>
                     <tbody>
                     {cartProducts.map(data => (
                        <tr key={data.details}>
                           <td>{data.details}</td>
-                    <td className="digits">{data.qty}</td>
-                          <td className={`font-${data.statusColor}`}>{data.status}</td>
                           <td>
-                          <div className={`span badge badge-pill ${data.className}`}>{data.price}</div></td>
+                            <div className={`span badge badge-pill ${data.className}`}>{data.price}</div>
+                          </td>
+                       </tr>
+                    ))}                     
+                    </tbody>
+                  </Table>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xl="6" className="xl-100 box-col-12">
+            <Card>
+              <CardHeader>
+                <h5>Others Overview</h5>
+              </CardHeader>
+              <CardBody>
+                <div className="user-status table-responsive">
+                  <Table borderless>
+                    <thead>
+                      <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {cartProducts.map(data => (
+                       <tr key={data.details}>
+                          <td>{data.details}</td>
+                          <td>
+                            <div className={`span badge badge-pill ${data.className}`}>{data.price}</div>
+                          </td>
                        </tr>
                     ))}                     
                     </tbody>

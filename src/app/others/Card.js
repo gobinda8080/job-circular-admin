@@ -25,35 +25,40 @@ const  CardView = (props) => {
     }
 
     const dateChecker = n => {
-        let d = new Date()
-        let y = d.getFullYear();
-        let m = d.getMonth();
-        let day = d.getDate()
-        let date = n.split('-')
-        
-        if( parseInt(date[0]) >= y ){
-            if(parseInt(date[0]) === y){
-              if(parseInt(date[1]) >= m+1){
-                if(parseInt(date[1]) === m+1){
-                  if(parseInt(date[2]) >= day){
-                    return 0
+        const rgx = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/
+        if(rgx.test(n)){
+          let d = new Date()
+          let y = d.getFullYear();
+          let m = d.getMonth();
+          let day = d.getDate()
+          let date = n.split('-')
+          
+          if( parseInt(date[0]) >= y ){
+              if(parseInt(date[0]) === y){
+                if(parseInt(date[1]) >= m+1){
+                  if(parseInt(date[1]) === m+1){
+                    if(parseInt(date[2]) >= day){
+                      return 0
+                    }else{
+                      return true
+                    }
                   }else{
-                    return true
+                    return 0
                   }
                 }else{
-                  return 0
+                return true
                 }
               }else{
-              return true
+                return 0
               }
-            }else{
-              return 0
-            }
+          }else{
+              return true
+          } 
         }else{
-            return true
-        } 
+          return 0
+        }  
     }
-
+  
 
     let endDeadline = null
     if(props.date){

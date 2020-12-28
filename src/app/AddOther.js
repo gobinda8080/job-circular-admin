@@ -36,6 +36,7 @@ const OthersInput = () => {
 if(title !== ''){
   if(files.image !== '' && files.pdf !== ''){
       //uploading PDF
+      let curDate = new Date();
       let pdf = files.pdf[0]
       let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
       uploadTask.on('state_changed', 
@@ -60,7 +61,7 @@ if(title !== ''){
               ()=>{
                 fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( imageUrl=>{
                   const { title, description, date, category} = info
-                  fb.database().ref('/others').push({title, description, date, category, image: imageUrl, pdf: pdfUrl })
+                  fb.database().ref('/others').push({title, description, date, category, image: imageUrl, pdf: pdfUrl, create: curDate.toString() })
                   handleSuccess();
                   handleClear();
                 })
@@ -73,7 +74,7 @@ if(title !== ''){
 
     }else{
       if(files.image !== '' && files.pdf === ''){
-
+        let curDate = new Date();
         let image = files.image[0]
         let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
         uploadTask.on('state_changed', 
@@ -86,7 +87,7 @@ if(title !== ''){
           ()=>{
             fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
               const { title, description, date, category} = info
-              fb.database().ref('/others').push({title, description, date, category, image: url, pdf: '' })
+              fb.database().ref('/others').push({title, description, date, category, image: url, pdf: '', create: curDate.toString() })
               handleSuccess();
               console.log(url);
               handleClear();
@@ -95,7 +96,7 @@ if(title !== ''){
         ) 
 
       }else if(files.image === '' && files.pdf !== ''){
-
+        let curDate = new Date();
         let pdf = files.pdf[0]
         let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
         uploadTask.on('state_changed', 
@@ -108,7 +109,7 @@ if(title !== ''){
           ()=>{
             fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( url=>{
               const { title, description, date, category} = info
-              fb.database().ref('/others').push({title, description, date, category, image: '', pdf: url })
+              fb.database().ref('/others').push({title, description, date, category, image: '', pdf: url, create: curDate.toString() })
               handleSuccess();
               console.log(url);
               handleClear();
@@ -116,7 +117,8 @@ if(title !== ''){
           }
         ) 
       }else{
-        fb.database().ref('/others').push({title, description, date, category, image: '', pdf: ''})
+        let curDate = new Date();
+        fb.database().ref('/others').push({title, description, date, category, image: '', pdf: '', create: curDate.toString()})
         handleSuccess();
         handleClear();
       }
