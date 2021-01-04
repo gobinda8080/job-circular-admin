@@ -26,7 +26,7 @@ const  JobList = (props) => {
   let allJobsList = null
   if(jobList){
     allJobsList = jobList.map((job)=>{
-      return <CardView title={job.title} jobKey={job.key} description={job.description} image={job.image} date={job.date}/>
+      return <CardView title={job.title} jobKey={job.key} key={job.key} description={job.description} image={job.image} date={job.date}/>
     })
   }
     return (

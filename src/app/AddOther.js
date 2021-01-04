@@ -7,11 +7,13 @@ import fb, { db } from '../data/base'
 const OthersInput = () => {
 
   const [success, setSuccess] = React.useState(null)
+
   const [info, setInfo] = React.useState({
     title: '',
     description: '',
     date: '',
     category: '',
+    extra: ''
   })
   const [files, setFiles] = React.useState({
     image: '',
@@ -32,100 +34,123 @@ const OthersInput = () => {
     })
   }
   const handleSubmit = ()=>{
-    const {title, description, date, category} = info
-if(title !== ''){
-  if(files.image !== '' && files.pdf !== ''){
-      //uploading PDF
-      let curDate = new Date();
-      let pdf = files.pdf[0]
-      let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
-      uploadTask.on('state_changed', 
-        (snapshot)=>{
-                      
-        },
-        (error)=>{
-          console.log(error)
-        },
-        ()=>{
-          fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( pdfUrl=>{
-        //uploading IMAGE
+
+  fetch('https://jobcircular-a4e2d.firebaseio.com/index.json')
+  .then(res => res.json())
+  .then(data =>{
+      const PRE_LIMIT = data.LIMIT
+      const START = data.START
+      const {title, description, date, category, extra } = info
+
+    if(title !== ''){
+      if(files.image !== '' && files.pdf !== ''){
+          //uploading PDF
+          let pdf = files.pdf[0]
+          let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
+          uploadTask.on('state_changed', 
+            (snapshot)=>{
+                          
+            },
+            (error)=>{
+              console.log(error)
+            },
+            ()=>{
+              fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( pdfUrl=>{
+            //uploading IMAGE
+                let image = files.image[0]
+                let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
+                uploadTask.on('state_changed', 
+                  (snapshot)=>{
+        
+                  },
+                  (error)=>{
+                    console.log(error)
+                  },
+                  ()=>{
+                    fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( imageUrl=>{
+                      const { title, description, date, category, extra } = info
+                      fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+                      fb.database().ref('/others').push({title, description, date, category, image: imageUrl, pdf: pdfUrl, create: PRE_LIMIT, status: 'other', extra })
+                      handleSuccess();
+                      handleClear();
+                    })
+                  }
+                ) 
+        
+              })
+            }
+          ) 
+
+        }else{
+          if(files.image !== '' && files.pdf === ''){
             let image = files.image[0]
             let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
             uploadTask.on('state_changed', 
               (snapshot)=>{
-    
+
               },
               (error)=>{
                 console.log(error)
               },
               ()=>{
-                fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( imageUrl=>{
-                  const { title, description, date, category} = info
-                  fb.database().ref('/others').push({title, description, date, category, image: imageUrl, pdf: pdfUrl, create: curDate.toString() })
+                fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
+                  const { title, description, date, category, extra} = info
+                  fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+                  fb.database().ref('/others').push({title, description, date, category, image: url, pdf: '', create: PRE_LIMIT, status: 'other', extra })
                   handleSuccess();
+                  console.log(url);
                   handleClear();
                 })
               }
             ) 
-    
-          })
+
+          }else if(files.image === '' && files.pdf !== ''){
+            let pdf = files.pdf[0]
+            let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
+            uploadTask.on('state_changed', 
+              (snapshot)=>{
+                            
+              },
+              (error)=>{
+                console.log(error)
+              },
+              ()=>{
+                fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( url=>{
+                  const { title, description, date, category, extra } = info
+                  fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+                  fb.database().ref('/others').push({title, description, date, category, image: '', pdf: url, create: PRE_LIMIT, status: 'other', extra })
+                  handleSuccess();
+                  console.log(url);
+                  handleClear();
+                })
+              }
+            ) 
+          }else{
+            fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+            fb.database().ref('/others').push({title, description, date, category, image: '', pdf: '', create: PRE_LIMIT, status: 'other', extra })
+            handleSuccess();
+            handleClear();
+            let payload  = {
+              included_segments : ["Subscribed Users"],
+              app_id : "bf9448fe-8819-43c1-a836-774c986f1f71",
+              contents : { en: "This is new"},
+              headings : { en : "........."}
+            }
+            fetch('https://onesignal.com/api/v1/notifications', {
+              method: 'post',
+              headers: {
+                'Authorization': `Basic NTJiOTZiNzctNWMwOS00MmZiLTkyOWUtMWQ3NzJjZjExMzZj`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            })
+          }
+
         }
-      ) 
-
-    }else{
-      if(files.image !== '' && files.pdf === ''){
-        let curDate = new Date();
-        let image = files.image[0]
-        let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
-        uploadTask.on('state_changed', 
-          (snapshot)=>{
-
-          },
-          (error)=>{
-            console.log(error)
-          },
-          ()=>{
-            fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
-              const { title, description, date, category} = info
-              fb.database().ref('/others').push({title, description, date, category, image: url, pdf: '', create: curDate.toString() })
-              handleSuccess();
-              console.log(url);
-              handleClear();
-            })
-          }
-        ) 
-
-      }else if(files.image === '' && files.pdf !== ''){
-        let curDate = new Date();
-        let pdf = files.pdf[0]
-        let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
-        uploadTask.on('state_changed', 
-          (snapshot)=>{
-                        
-          },
-          (error)=>{
-            console.log(error)
-          },
-          ()=>{
-            fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( url=>{
-              const { title, description, date, category} = info
-              fb.database().ref('/others').push({title, description, date, category, image: '', pdf: url, create: curDate.toString() })
-              handleSuccess();
-              console.log(url);
-              handleClear();
-            })
-          }
-        ) 
-      }else{
-        let curDate = new Date();
-        fb.database().ref('/others').push({title, description, date, category, image: '', pdf: '', create: curDate.toString()})
-        handleSuccess();
-        handleClear();
-      }
-
-    }
-  }    
-
+      } 
+    }).catch( err=>{
+      console.log(err)
+  })
 }
 
 const handleSuccess = ()=>{
@@ -164,7 +189,7 @@ console.log(files)
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlInput1">Title</Label>
-                        <Input className="form-control" name="title"  type="text" placeholder="Circular title..." value={info.title} onChange={handleInfo}/>
+                        <Input className="form-control" name="title"  type="text" placeholder="..." value={info.title} onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -173,6 +198,14 @@ console.log(files)
                       <FormGroup className="mb-2">
                         <Label>Description</Label>
                         <Input type="textarea" name="description" className="form-control"  rows="3" value={info.description}  onChange={handleInfo}/>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label htmlFor="exampleFormControlInput1">Extra</Label>
+                        <Input className="form-control" type="text" name="extra" placeholder=" " value={info.extra} onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>

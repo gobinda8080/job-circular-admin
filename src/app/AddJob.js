@@ -3,8 +3,6 @@ import BreadCrumb from '../layout/Breadcrumb'
 import {Container,Row,Col,Card,CardHeader,CardBody,CardFooter,Button,Form,FormGroup,Label,Input} from 'reactstrap'
 import fb, { db } from '../data/base'
 
-
-
 const BaseInput = () => {
 
   const [success, setSuccess] = React.useState(null)
@@ -33,12 +31,16 @@ const BaseInput = () => {
     })
   }
   const handleSubmit = ()=>{
-    const {title, description, date, category} = info
-if(title !== ''){
 
-  if(files.image !== '' && files.pdf !== ''){
+    fetch('https://jobcircular-a4e2d.firebaseio.com/index.json')
+    .then(res => res.json())
+    .then(data =>{
+        const PRE_LIMIT = data.LIMIT
+        const START = data.START
+    const {title, description, date, category } = info
+    if(title !== ''){
+    if(files.image !== '' && files.pdf !== ''){
       //uploading PDF
-      let curDate = new Date();
       let pdf = files.pdf[0]
       let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
       uploadTask.on('state_changed', 
@@ -62,8 +64,9 @@ if(title !== ''){
               },
               ()=>{
                 fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( imageUrl=>{
-                  const { title, description, date, category} = info
-                  fb.database().ref('/jobs').push({title, description, date, category, image: imageUrl, pdf: pdfUrl, create: curDate.toString() })
+                  const { title, description, date, category } = info
+                  fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+                  fb.database().ref('/jobs').push({title, description, date, category, image: imageUrl, pdf: pdfUrl, create: PRE_LIMIT, status: 'job' })
                   handleSuccess();
                   handleClear();
                 })
@@ -76,7 +79,6 @@ if(title !== ''){
 
     }else{
       if(files.image !== '' && files.pdf === ''){
-        let curDate = new Date();
         let image = files.image[0]
         let uploadTask = fb.storage().ref(`images/${image.name}`).put(image)
         uploadTask.on('state_changed', 
@@ -88,8 +90,9 @@ if(title !== ''){
           },
           ()=>{
             fb.storage().ref('images').child(files.image[0].name).getDownloadURL().then( url=>{
-              const { title, description, date, category} = info
-              fb.database().ref('/jobs').push({title, description, date, category, image: url, pdf: '', create: curDate.toString() })
+              const { title, description, date, category } = info
+              fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+              fb.database().ref('/jobs').push({title, description, date, category, image: url, pdf: '', create: PRE_LIMIT, status: 'job' })
               handleSuccess();
               console.log(url);
               handleClear();
@@ -98,7 +101,6 @@ if(title !== ''){
         ) 
 
       }else if(files.image === '' && files.pdf !== ''){
-        let curDate = new Date();
         let pdf = files.pdf[0]
         let uploadTask = fb.storage().ref(`images/${pdf.name}`).put(pdf)
         uploadTask.on('state_changed', 
@@ -110,8 +112,9 @@ if(title !== ''){
           },
           ()=>{
             fb.storage().ref('images').child(files.pdf[0].name).getDownloadURL().then( url=>{
-              const { title, description, date, category} = info
-              fb.database().ref('/jobs').push({title, description, date, category, image: '', pdf: url, create: curDate.toString() })
+              const { title, description, date, category } = info
+              fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+              fb.database().ref('/jobs').push({title, description, date, category, image: '', pdf: url, create: PRE_LIMIT, status: 'job' })
               handleSuccess();
               console.log(url);
               handleClear();
@@ -119,14 +122,17 @@ if(title !== ''){
           }
         ) 
       }else{
-        let curDate = new Date();
-        fb.database().ref('/jobs').push({title, description, date, category, image: '', pdf: '', create: curDate.toString()})
+        fb.database().ref(`/index`).set({LIMIT : PRE_LIMIT+1, START: START})
+        fb.database().ref('/jobs').push({title, description, date, category, image: '', pdf: '', create: PRE_LIMIT, status: 'job' })
         handleSuccess();
         handleClear();
       }
 
     }
-  }    
+  }
+  }).catch( err=>{
+    console.log(err)
+  })    
 
 }
 
@@ -166,7 +172,7 @@ const handleClear = ()=>{
                     <Col>
                       <FormGroup>
                         <Label htmlFor="exampleFormControlInput1">Title</Label>
-                        <Input className="form-control" type="text" name="title" placeholder="সিভিল সার্ভিস প্রশাসন একাডেমি-তে নিয়োগ..." value={info.title} onChange={handleInfo}/>
+                        <Input className="form-control" type="text" name="title" placeholder="..." value={info.title} onChange={handleInfo}/>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -199,7 +205,7 @@ const handleClear = ()=>{
                           <option value="ডিফেন্স জবস">ডিফেন্স জবস</option>
                           <option value="শিক্ষক নিয়োগ">শিক্ষক নিয়োগ</option>
                           <option value="হেলথ/মেডিকেল">হেলথ/মেডিকেল</option>
-                          <option value="হেলথ/মেডিকেল">সরকারি চাকরি</option>
+                          <option value="সরকারি চাকরি">সরকারি চাকরি</option>
                           <option value="অন্যান্য/Others">অন্যান্য/Others</option>
                         </Input>
                       </FormGroup>

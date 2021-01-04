@@ -3,8 +3,8 @@ import {Row,Col,Card,CardHeader,CardBody} from 'reactstrap';
 import Cbody from '../common/cbody'
 import fb from '../../data/base'
 const  CardView = (props) => {
+  
     const [details, setDetails] = React.useState(null);
-    console.log(props)
     let headerRadius = null
     if(!details){
         headerRadius = { 
@@ -19,9 +19,18 @@ const  CardView = (props) => {
             setDetails(true)
         }
     }
+    if(props.image){
+      const rg = /(%2F)..*(%2F)/
+      let imageName = rg.test(props.image)
+      console.log(imageName)
+    }
+
     const handleDelete = (key) =>{
         alert('Are you want to sure delete ?')
         fb.database().ref(`/others/${key}`).remove() 
+        fb.storage().refFromURL(props.image).delete().catch(err=>{
+          console.log(err)
+        })
     }
 
     const dateChecker = n => {
